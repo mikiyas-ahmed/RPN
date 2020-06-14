@@ -10,6 +10,7 @@ public class PostfixCreater {
         private int index;
         Precedence(int index)
         {
+        	
             this.index = index;
         }
         public int getIndex()
