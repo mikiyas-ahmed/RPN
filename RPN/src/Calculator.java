@@ -18,17 +18,14 @@ public class Calculator{
 				
 				double operand2=result.pop();
 				
-				System.out.println(operand2);
-				System.out.println(operand1);
-				System.out.println(token);
-				
 				double calc= calculate(operand1, operand2, token);
-				System.out.println(calc);System.out.println();
 				result.push(calc);
 			}
 
 		}
-		return result.pop();
+		double final_result=result.pop();
+
+		return final_result;
 	}
 
 	private static double  calculate(double operand1, double operand2, String token) {
@@ -48,10 +45,7 @@ public class Calculator{
 			result= operand2 * operand1;
 			return result;
 		case "^":
-			result=operand1;
-			for(int i=1; i<= operand2; i++) {
-			result= result * operand1;}
-			return result;
+			result=Math.pow(operand2, operand1);
 		}
 		return result;
 	}
@@ -83,11 +77,11 @@ class Stack {
 	    { 
 	        if (top >= (MAX - 1)) { 
 	            System.out.println("Stack Overflow"); 
+	            System.exit(0);
 	            return false; 
 	        } 
 	        else { 
 	            a[++top] = d; 
-	            System.out.println(d + " pushed into stack"); 
 	            return true; 
 	        } 
 	    } 
@@ -95,7 +89,8 @@ class Stack {
 	    double pop() 
 	    { 
 	        if (top < 0) { 
-	            System.out.println("Stack Underflow"); 
+	            System.out.println("Stack Underflow there is no enough operand to calocolate"); 
+	            System.exit(0);
 	            return 0; 
 	        } 
 	        else { 
@@ -108,6 +103,7 @@ class Stack {
 	    { 
 	        if (top < 0) { 
 	            System.out.println("Stack Underflow"); 
+	            System.exit(0);
 	            return 0; 
 	        } 
 	        else { 
