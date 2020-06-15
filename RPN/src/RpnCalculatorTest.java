@@ -10,14 +10,18 @@ public class RpnCalculatorTest {
 		
 		PostfixCreater sy = new PostfixCreater();
 
-		String infix = "7+8-9+6";
+		String infix = "12^(5+2)+7";
+		
+
 
 		ArrayList<String> postfix = sy.postfix(infix);
+		
+
+		System.out.println("\n......................Calculation Started..............................\n");
 		System.out.println("\nPostfix expression : " + postfix);
-		System.out.println("\n*********Calculation Started**********\n");
 		Calculator cal= new Calculator();
 		double result=  cal.EvaluatePostfix(postfix);
-		System.out.println("\nresult = "+result);
+		System.out.println("\n\t\t\tresult = "+result);
 		
 	}
 	
@@ -26,14 +30,15 @@ public class RpnCalculatorTest {
 		
 		PostfixCreater sy = new PostfixCreater();
 
-		String infix = "7+(8-9)+63*10";
-
+		String infix = "7+((8-9)+5)+63*10";
+		
 		ArrayList<String> postfix = sy.postfix(infix);
+
+		System.out.println("\n......................Calculation Started..............................\n");
 		System.out.println("\nPostfix expression : " + postfix);
-		System.out.println("\n*********Calculation Started**********\n");
 		Calculator cal= new Calculator();
 		double result=  cal.EvaluatePostfix(postfix);
-		System.out.println("\nresult = "+result);
+		System.out.println("\n\t\t\tresult = "+result);
 		
 				
 	}
@@ -43,14 +48,16 @@ public class RpnCalculatorTest {
 		
 		PostfixCreater sy = new PostfixCreater();
 
+
 		String infix = "7+6^2";
 
 		ArrayList<String> postfix = sy.postfix(infix);
+
+		System.out.println("\n......................Calculation Started..............................\n");
 		System.out.println("\nPostfix expression : " + postfix);
-		System.out.println("\n*********Calculation Started**********\n");
 		Calculator cal= new Calculator();
 		double result=  cal.EvaluatePostfix(postfix);
-		System.out.println("\nresult = "+result);
+		System.out.println("\n\t\t\tresult = "+result);
 		
 				
 	}
