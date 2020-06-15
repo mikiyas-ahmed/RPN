@@ -1,16 +1,18 @@
 import java.util.ArrayList;
 
 
+
 public class PostfixCreater {
 
-	private enum Precedence
+
+    /** enum **/
+    private enum Precedence
     {
-        lp(0), rp(1), add(2), minus(3), divide(4), mult(5), mod(6),pow(7), noth(8), number(9);
+        lparen(0), rparen(1), plus(2), minus(3), divide(4), times(5), mod(6),pow(7), eos(8), operand(9);
  
         private int index;
         Precedence(int index)
         {
-        	
             this.index = index;
         }
         public int getIndex()
@@ -24,24 +26,38 @@ public class PostfixCreater {
     private static final int[] icp = {20, 19, 12, 12, 13, 13, 13, 14, 0};
     /** operators **/
     private static final String[] operators = {"{", "}", "+", "-", "/", "*", "%", "^", " "};
-
+    /** precedence stack **/
+    private Precedence[] stack; 
+    /** stack top pointer **/
+    private int top;
+ 
+    /** pop element from stack **/
+    private Precedence pop()
+    {
+        return stack[top--];
+    }
+    /** push element onto stack **/
+    private void push(Precedence ele)
+    {
+        stack[++top] = ele;
+    }
+    /** get precedence token for symbol **/
     public Precedence getToken(String symbol)
     {
         switch (symbol)
         {
-        case "("  : return Precedence.lp;
-        case ")"  : return Precedence.rp;
-        case "+"  : return Precedence.add;
+        case "("  : return Precedence.lparen;
+        case ")"  : return Precedence.rparen;
+        case "+"  : return Precedence.plus;
         case "-"  : return Precedence.minus;
         case "/"  : return Precedence.divide;
-        case "*"  : return Precedence.mult;
+        case "*"  : return Precedence.times;
         case "%"  : return Precedence.mod;
         case "^"  : return Precedence.pow;
-        case " "  : return Precedence.noth;
-        default   : return Precedence.number;
+        case " "  : return Precedence.eos;
+        default   : return Precedence.operand;
         }
     }
-    
     public boolean tryParseInt(String s) {  
 		try {  
 			Double.parseDouble(s);  
@@ -50,103 +66,59 @@ public class PostfixCreater {
 			return false;  
 		}  
 	}
-public ArrayList<String> postfix(String infix)
-{
-	ArrayList<String> postfix =new ArrayList<String>();
-	String[] t = infix.split("(?<=[-+*/()])|(?=[-+*/()])");
-	Stack stack = new Stack();
-	Precedence pretoken;
-	for (int i = 0; i < t.length; i++)
-	{
+ 
+    /** Function to convert infix to postfix **/
+    public ArrayList<String> postfix(String infix)
+    {
+        ArrayList<String> postfix =new ArrayList<String>();
+        //String postfix ="";
+    	top = 0;
+    	int operatatorCount=0,operandCount=0;
+        stack = new Precedence[infix.length()];
+        stack[0] = Precedence.eos;
+        String[] t = infix.split("(?<=[-+^*/()])|(?=[-+^*/()])");
+        Precedence token;
+        for (int i = 0; i < t.length; i++)
+        {
+        	String c= t[i];
+            token = getToken(c);
+            //System.out.println(token);
+            /** if token is operand append to postfix **/
+            if (tryParseInt(t[i])) {
+                postfix.add( t[i]);
+                operandCount++;
+                }
+            /** if token is right parenthesis pop till matching left parenthesis **/
+            else if (token == Precedence.rparen)
+            {
+                while (stack[top] != Precedence.lparen)
+                    {postfix.add(operators[pop().getIndex()]);
+                    operatatorCount++;
+                    }
+                /** discard left parenthesis **/
+                pop();
+            }
+            /** else pop stack elements whose precedence is greater than that of token **/
+            else
+            {
+                while (isp[stack[top].getIndex()] >= icp[token.getIndex()])
+                    {postfix.add(operators[pop().getIndex()]);
+                    operatatorCount++;
+                    }
+                push(token);
+            }
+        }
+        /** pop any remaining elements in stack **/
+        while ((token = pop()) != Precedence.eos) {
+            postfix.add(operators[token.getIndex()]);
+            operatatorCount++;}
+ 
+        if(operatatorCount+1<operandCount) {
+        	System.out.print("there is no enough operator to calculate ");
+        	System.exit(0);
+        }
+        
+        return postfix;
+    }
 
-		String token =t[i]; 
-        pretoken=getToken(t[i]);
-
-		/** if token is operand append to postfix **/
-		if (tryParseInt(token)){
-			postfix.add(t[i]);
-		}
-		/** if token is right parenthesis pop till matching left parenthesis **/
-
-		else if(pretoken==Precedence.rp) {
-			while (stack.peek() != Precedence.lp)
-				postfix.add(operators[stack.pop().getIndex()]);
-			/** discard left parenthesis **/
-			stack.pop();
-		}
-		 
-		else {
-			System.out.print(pretoken.getIndex());
-			System.out.println();
-			while (!stack.isEmpty() && isp[stack.peek().getIndex()] >= icp[pretoken.getIndex()])
-				{
-				postfix.add(operators[stack.pop().getIndex()]);
-				}
-			stack.push(pretoken);
-		}
-			
-
-	}
-
-	while(!stack.isEmpty())
-		postfix.add(operators[stack.pop().getIndex()]);
-	return postfix;
-}
-
-
-class Stack { 
-	    static final int MAX = 10; 
-	    int top; 
-	    Precedence a[] = new Precedence[MAX]; // Maximum size of Stack 
-	  
-	    boolean isEmpty() 
-	    { 
-	        return (top < 0); 
-	    } 
-	    Stack() 
-	    { 
-	        top = -1; 
-	    } 
-	  
-	    boolean push(Precedence x) 
-	    { 
-	        if (top >= (MAX - 1)) { 
-	            System.out.println("Stack Overflow"); 
-	            return false; 
-	        } 
-	        else { 
-	            a[++top] = x; 
-	            System.out.println(x + " pushed into stack"); 
-	            return true; 
-	        } 
-	    } 
-	  
-	    Precedence pop() 
-	    { 
-//	        if (top < 0) { 
-//	            System.out.println("Stack Underflow"); 
-//	            return 0; 
-//	        } 
-//	        else { 
-	        	Precedence x = a[top--]; 
-	            return x; 
-//	        } 
-	    } 
-	  
-	    Precedence peek() 
-	    { 
-//	        if (top < 0) { 
-//	            System.out.println("Stack Underflow"); 
-//	            return 0; 
-//	        } 
-//	        else { 
-	        	Precedence x = a[top]; 
-	            return x; 
-//	        } 
-	    } 
-} 
-
-
-
-	
 }
